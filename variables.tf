@@ -1,3 +1,8 @@
+variable "custom_data" {
+  description = "Custom data fo rthe VM"
+  type = string
+  default = null
+}
 variable "name" {
   description = "Name for a single VM. Use 'names' for multiple VMs. "
   type        = string
