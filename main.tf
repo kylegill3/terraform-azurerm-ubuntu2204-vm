@@ -56,14 +56,14 @@ locals {
   }
 }
 
-resource "azurerm_availability_set" "vm" {
-  depends_on          = [var.module_depends_on]
-  for_each            = toset(length(var.availability_set_name) > 0 ? [var.availability_set_name] : [])
-  name                = each.value
-  resource_group_name = local.resource_group_name
-  location            = local.location
-  tags                = local.tags
-}
+# resource "azurerm_availability_set" "vm" {
+#   depends_on          = [var.module_depends_on]
+#   for_each            = toset(length(var.availability_set_name) > 0 ? [var.availability_set_name] : [])
+#   name                = each.value
+#   resource_group_name = local.resource_group_name
+#   location            = local.location
+#   tags                = local.tags
+# }
 
 resource "azurerm_network_interface" "vm" {
   for_each = toset(local.names)
@@ -81,25 +81,25 @@ resource "azurerm_network_interface" "vm" {
   }
 }
 
-resource "azurerm_network_interface_application_security_group_association" "vm" {
-  for_each                      = local.vms_to_application_security_groups
-  network_interface_id          = azurerm_network_interface.vm[each.value.vm_name].id
-  application_security_group_id = each.value.application_security_group_id
-}
+# resource "azurerm_network_interface_application_security_group_association" "vm" {
+#   for_each                      = local.vms_to_application_security_groups
+#   network_interface_id          = azurerm_network_interface.vm[each.value.vm_name].id
+#   application_security_group_id = each.value.application_security_group_id
+# }
 
-resource "azurerm_network_interface_backend_address_pool_association" "vm" {
-  for_each                = local.vms_to_load_balancer_backend_address_pools
-  network_interface_id    = azurerm_network_interface.vm[each.value.vm_name].id
-  ip_configuration_name   = "ipconfiguration1"
-  backend_address_pool_id = each.value.backend_address_pool_id
-}
+# resource "azurerm_network_interface_backend_address_pool_association" "vm" {
+#   for_each                = local.vms_to_load_balancer_backend_address_pools
+#   network_interface_id    = azurerm_network_interface.vm[each.value.vm_name].id
+#   ip_configuration_name   = "ipconfiguration1"
+#   backend_address_pool_id = each.value.backend_address_pool_id
+# }
 
-resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "example" {
-  for_each                = local.vms_to_application_gateway_backend_address_pools
-  network_interface_id    = azurerm_network_interface.vm[each.value.vm_name].id
-  ip_configuration_name   = "ipconfiguration1"
-  backend_address_pool_id = each.value.backend_address_pool_id
-}
+# resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "example" {
+#   for_each                = local.vms_to_application_gateway_backend_address_pools
+#   network_interface_id    = azurerm_network_interface.vm[each.value.vm_name].id
+#   ip_configuration_name   = "ipconfiguration1"
+#   backend_address_pool_id = each.value.backend_address_pool_id
+# }
 
 resource "azurerm_linux_virtual_machine" "vm" {
   for_each = toset(local.names)
@@ -112,21 +112,21 @@ resource "azurerm_linux_virtual_machine" "vm" {
   admin_username                  = local.admin_username
   disable_password_authentication = true
   size                            = local.vm_size
-  availability_set_id             = length(var.availability_set_name) > 0 ? azurerm_availability_set.vm[var.availability_set_name].id : var.availability_set_id
+  availability_set_id             = var.availability_set_id #length(var.availability_set_name) > 0 ? azurerm_availability_set.vm[var.availability_set_name].id : var.availability_set_id
   // zone                            = 'A'
 
   network_interface_ids = [azurerm_network_interface.vm[each.key].id]
 
-  /*
+  
   source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
-  */
+  
 
-  source_image_id = var.source_image_id
+  #source_image_id = var.source_image_id
 
   os_disk {
     name                 = "${each.value}-os"
