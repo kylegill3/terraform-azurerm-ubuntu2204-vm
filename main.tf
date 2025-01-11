@@ -72,6 +72,12 @@ resource "azurerm_network_interface" "vm" {
   }
 }
 
+resource "azurerm_network_interface_backend_address_pool_association" "vm" {
+  for_each                = local.vms_to_load_balancer_backend_address_pools
+  network_interface_id    = azurerm_network_interface.vm[each.value.vm_name].id
+  ip_configuration_name   = "ipconfiguration1"
+  backend_address_pool_id = each.value.backend_address_pool_id
+}
 
 resource "azurerm_linux_virtual_machine" "vm" {
   for_each = toset(local.names)
