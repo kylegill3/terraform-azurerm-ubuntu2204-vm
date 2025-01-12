@@ -94,7 +94,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   network_interface_ids = [azurerm_network_interface.vm[each.key].id]
  
-  source_image_reference = var.source_image_reference
+  source_image_reference {
+    publisher = var.source_image_reference.publisher
+    offer     = var.source_image_reference.offer
+    sku       = var.source_image_reference.sku
+    version   = var.source_image_reference.version
+  }
 
   os_disk {
     name                 = "${each.value}-os"
