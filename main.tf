@@ -93,14 +93,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
   availability_set_id             = var.availability_set_id
 
   network_interface_ids = [azurerm_network_interface.vm[each.key].id]
-
-  
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gen2"
-    version   = "latest"
-  }
+ 
+  source_image_reference = var.source_image_reference
 
   os_disk {
     name                 = "${each.value}-os"
