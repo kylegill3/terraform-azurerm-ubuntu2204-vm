@@ -22,7 +22,6 @@ variable "source_image_id" {
 }
 
 variable "source_image_reference" {
-  // Not currently used - custom images only
   description = "Standard image reference block for platform images. Do not use if specifying a custom source_image_id."
   type = object({
     publisher = string
@@ -30,8 +29,6 @@ variable "source_image_reference" {
     sku       = string
     version   = string
   })
-  default = null
-
 }
 
 // ==============================================================================
